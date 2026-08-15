@@ -3,112 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AniPix.Uz - Anime Katalogi</title>
+    <title>AniPix.Uz</title>
     <style>
         body {
             background-color: #0f0f0f;
             color: #ffffff;
-            font-family: Arial, sans-serif;
-            padding: 15px;
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
             margin: 0;
         }
         h2 {
             text-align: center;
             color: #00ffcc;
-            margin-bottom: 5px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #aaa;
-            font-size: 14px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         .anime-card {
             background: #1a1a1a;
             border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #0088cc; /* Yonidan chiroyli chiziq */
         }
-        .anime-img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
+        .anime-card h3 {
+            margin: 0 0 10px 0;
+            color: #fff;
         }
         .anime-info {
-            padding: 15px;
-        }
-        .anime-info h3 {
-            margin: 0 0 5px 0;
-            font-size: 18px;
-        }
-        .anime-info p {
             color: #aaa;
-            font-size: 13px;
-            margin: 0 0 12px 0;
+            font-size: 14px;
+            margin-bottom: 15px;
         }
         .btn {
             display: block;
             width: 100%;
-            background: linear-gradient(45deg, #00b4db, #0083b0);
+            background-color: #0088cc;
             color: white;
             text-align: center;
             padding: 12px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
-            box-sizing: border-box;
             border: none;
             cursor: pointer;
-            font-size: 15px;
         }
         .btn:active {
-            opacity: 0.8;
+            background-color: #006699;
         }
     </style>
 </head>
 <body>
 
     <h2>🎬 AniPix.Uz</h2>
-    <div class="subtitle">Barcha animelar to'plami bir joyda!</div>
 
-    <!-- 1-Anime: Solo Leveling -->
+    <!-- Anime 1 -->
     <div class="anime-card">
-        <img src="https://ibb.co/Fkbv7YjL" alt="Solo Leveling" class="anime-img">
-        <div class="anime-info">
-            <h3>Solo Leveling (Barcha qismlar)</h3>
-            <p>Janr: Jangari, Fantastika, Sаргузашт</p>
-            <!-- Tugma bosilganda avval reklama ishlaydi, keyin kanalga o'tadi -->
-            <button class="btn" onclick="animeKorish('https://t.me/animelarnN1')">Ko'rish</button>
-        </div>
+        <h3>Solo Leveling</h3>
+        <div class="anime-info">Janr: Jangari, Fantastika <br> Til: O'zbekcha</div>
+        <button class="btn" onclick="animeKorish('https://t.me/animelarnN1')">Ko'rish</button>
     </div>
 
-    <!-- 2-Anime: Attack on Titan -->
+    <!-- Anime 2 -->
     <div class="anime-card">
-        <img src="titan.jpg" alt="Attack on Titan" class="anime-img">
-        <div class="anime-info">
-            <h3>Hujum Korpusi (Attack on Titan)</h3>
-            <p>Janr: Fentezi, Drama, Jangari</p>
-            <button class="btn" onclick="animeKorish('https://t.me/animelarnN1')">Ko'rish</button>
-        </div>
+        <h3>Hujum Korpusi (Attack on Titan)</h3>
+        <div class="anime-info">Janr: Fentezi, Drama <br> Til: O'zbekcha</div>
+        <button class="btn" onclick="animeKorish('https://t.me/animelarnN1')">Ko'rish</button>
     </div>
 
-    <!-- Telegram WebApp va Reklama logikasi -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Oynani to'liq ekranga yoyish
+        tg.expand();
 
-        function animeKorish( kanalUvi ) {
-            // Bu yerga Monetag reklama kodingizni yoki funksiyangizni ulaysiz
-            alert("Reklama yuklanmoqda... (Bu yerda Monetag reklamasi chiqadi)");
-            
-            // Reklamadan keyin kanalga o'tkazish:
-            setTimeout(function() {
-                window.open(kanalUvi, '_blank');
-            }, 1000); // 1 sekunddan keyin kanalga o'tadi
+        function animeKorish(url) {
+            // Reklama uchun joy (Monetag skriptini shu yerga qo'shasiz)
+            alert("Reklama yuklanmoqda..."); 
+            setTimeout(() => {
+                window.open(url, '_blank');
+            }, 1000);
         }
     </script>
 </body>
 </html>
+
 
