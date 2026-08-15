@@ -15,14 +15,29 @@
         h2 {
             text-align: center;
             color: #00ffcc;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
+        }
+        .search-box {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 15px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .search-box:focus {
+            border-color: #0088cc;
         }
         .anime-card {
             background: #1a1a1a;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 15px;
-            border-left: 5px solid #0088cc; /* Yonidan chiroyli chiziq */
+            border-left: 5px solid #0088cc;
         }
         .anime-card h3 {
             margin: 0 0 10px 0;
@@ -49,24 +64,21 @@
         .btn:active {
             background-color: #006699;
         }
+        .loading {
+            text-align: center;
+            color: #aaa;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
     <h2>🎬 AniPix.Uz</h2>
 
-    <!-- Anime 1 -->
-    <div class="anime-card">
-        <h3>Solo Leveling</h3>
-        <div class="anime-info">Janr: Jangari, Fantastika <br> Til: O'zbekcha</div>
-        <button class="btn" onclick="animeKorish('https://t.me/animelarnN1')">Ko'rish</button>
-    </div>
+    <input type="text" id="searchInput" class="search-box" placeholder="Anime qidirish..." onkeyup="animeQidiruv()">
 
-    <!-- Anime 2 -->
-    <div class="anime-card">
-        <h3>Hujum Korpusi (Attack on Titan)</h3>
-        <div class="anime-info">Janr: Fentezi, Drama <br> Til: O'zbekcha</div>
-        <button class="btn" onclick="animeKorish('https://t.me/animelarnN1')">Ko'rish</button>
+    <div id="animeList">
+        <div class="loading">Ma'lumotlar yuklanmoqda...</div>
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -74,15 +86,73 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/11sQ6ue-cF8xzAqRSjaiyEJ-tnQj2kfg_wlD2PC7FiwA/export?format=csv';
+
+        async function loadAnime() {
+            try {
+                let response = await fetch(sheetUrl);
+                let data = await response.text();
+                parseCSV(data);
+            } catch (error) {
+                document.getElementById('animeList').innerHTML = '<div class="loading" style="color:red;">Maʼlumotlarni yuklashda xatolik yuz berdi!</div>';
+            }
+        }
+
+        function parseCSV(text) {
+            let rows = text.split('\n');
+            let listContainer = document.getElementById('animeList');
+            listContainer.innerHTML = '';
+
+            for (let i = 1; i < rows.length; i++) {
+                let row = rows[i].trim();
+                if (!row) continue;
+                
+                let cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                if (cols.length >= 4) {
+                    let nomi = cols[0].replace(/^"(.*)"$/, '$1').trim();
+                    let janri = cols[1].replace(/^"(.*)"$/, '$1').trim();
+                    let tili = cols[2].replace(/^"(.*)"$/, '$1').trim(); // <--- Xatolik to'g'irlandi (cols[2] qilindi)
+                    let havola = cols[3].replace(/^"(.*)"$/, '$1').trim();
+
+                    if (nomi) {
+                        let card = document.createElement('div');
+                        card.className = 'anime-card';
+                        card.innerHTML = `
+                            <h3>${nomi}</h3>
+                            <div class="anime-info">Janr: ${janri} <br> Til: ${tili}</div>
+                            <button class="btn" onclick="animeKorish('${havola}')">Ko'rish</button>
+                        `;
+                        listContainer.appendChild(card);
+                    }
+                }
+            }
+        }
+
         function animeKorish(url) {
-            // Reklama uchun joy (Monetag skriptini shu yerga qo'shasiz)
             alert("Reklama yuklanmoqda..."); 
             setTimeout(() => {
                 window.open(url, '_blank');
             }, 1000);
         }
+
+        function animeQidiruv() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('anime-card');
+
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].getElementsByTagName('h3')[0].innerText.toLowerCase();
+                if (title.includes(input)) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        loadAnime();
     </script>
 </body>
 </html>
+
 
 
