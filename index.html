@@ -111,7 +111,7 @@
                 if (cols.length >= 4) {
                     let nomi = cols[0].replace(/^"(.*)"$/, '$1').trim();
                     let janri = cols[1].replace(/^"(.*)"$/, '$1').trim();
-                    let tili = cols[2].replace(/^"(.*)"$/, '$1').trim(); // <--- Xatolik to'g'irlandi (cols[2] qilindi)
+                    let tili = cols[2].replace(/^"(.*)"$/, '$1').trim();
                     let havola = cols[3].replace(/^"(.*)"$/, '$1').trim();
 
                     if (nomi) {
@@ -128,11 +128,19 @@
             }
         }
 
-        function animeKorish(url) {
-            alert("Reklama yuklanmoqda..."); 
+        function animeKorish(telegramUrl) {
+            // Monetag Smart Link havolangizni shu tirnoq ichiga yozasiz:
+            let monetagLink = 'MONETAG_SMART_LINK_BUERGA_YOZING'; 
+
+            // 1. Monetag reklamasini ochish
+            if(monetagLink !== 'MONETAG_SMART_LINK_BUERGA_YOZING') {
+                window.open(monetagLink, '_blank');
+            }
+
+            // 2. Qisqa vaqt o'tgach Telegram kanalga yo'naltirish
             setTimeout(() => {
-                window.open(url, '_blank');
-            }, 1000);
+                window.open(telegramUrl, '_blank');
+            }, 600);
         }
 
         function animeQidiruv() {
@@ -153,6 +161,7 @@
     </script>
 </body>
 </html>
+
 
 
 
