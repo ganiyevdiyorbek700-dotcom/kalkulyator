@@ -1,0 +1,88 @@
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Uz App</title>
+    <!-- Telegram Web App JS -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 15px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #00ffcc;
+        }
+        .anime-card {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+            text-align: left;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .anime-card h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+        }
+        .anime-card p {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #aaa;
+        }
+        .btn {
+            background-color: #2481cc;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        .btn:active {
+            background-color: #1b659d;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎬 Anime Uz - Kinozali</h1>
+    <p>Ko'rish uchun anime tanlang:</p>
+
+    <!-- 1-Anime Kartochkasi -->
+    <div class="anime-card">
+        <h3>Naruto (1-qism)</h3>
+        <p>Janr: Jangari, Sarguzasht</p>
+        <button class="btn" onclick="animeKorish('https://t.me/SIZNING_KANAL_LINKINGIZ/1')">Ko'rish</button>
+    </div>
+
+    <!-- 2-Anime Kartochkasi -->
+    <div class="anime-card">
+        <h3>Hujum Korpusi (Attack on Titan)</h3>
+        <p>Janr: Fentezi, Drama</p>
+        <button class="btn" onclick="animeKorish('https://t.me/SIZNING_KANAL_LINKINGIZ/2')">Ko'rish</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Oynani to'liq ekranga yoyish
+
+        function animeKorish(videoUrl) {
+            // Hozircha oddiy reklama taqlidi (Keyinroq Monetag ulaymiz)
+            let korishniXohlaydi = confirm("Animeni ko'rish uchun oldin 5 soniyali reklamani ko'rishingiz kerak. Davom etamizmi?");
+            
+            if (korishniXohlaydi) {
+                alert("Reklama ko'rsatilmoqda... (Bu yerda Monetag ishlaydi)");
+                // Reklama tugagach video ochiladi
+                window.location.href = videoUrl;
+            }
+        }
+    </script>
+
+</body>
+</html
