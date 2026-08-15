@@ -77,16 +77,15 @@
         tg.expand(); // Oynani to'liq ekranga yoyish
 
         function animeKorish(videoUrl) {
-            // Hozircha oddiy reklama taqlidi (Keyinroq Monetag ulaymiz)
-            let korishniXohlaydi = confirm("Animeni ko'rish uchun oldin 5 soniyali reklamani ko'rishingiz kerak. Davom etamizmi?");
+            let korishniXohlaydi = confirm("Animeni ko'rish uchun kanalga o'tasiz. Davom etamizmi?");
             
             if (korishniXohlaydi) {
-                alert("Reklama ko'rsatilmoqda... (Bu yerda Monetag ishlaydi)");
-                // Reklama tugagach video ochiladi
-                window.location.href = videoUrl;
+                // Telegram ichida tashqi havolani ochish uchun to'g'riusul:
+                window.open(videoUrl, '_blank');
             }
         }
     </script>
 
 </body>
-</html
+</html>
+
