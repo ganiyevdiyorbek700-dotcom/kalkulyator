@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AniPix.Uz</title>
+    <title>AniPix.Uz - Anime Katalogi</title>
     <style>
         body {
             background-color: #0f0f0f;
@@ -15,33 +15,52 @@
         h2 {
             text-align: center;
             color: #00ffcc;
+            margin-bottom: 5px;
         }
-        p {
+        .subtitle {
             text-align: center;
             color: #aaa;
+            font-size: 14px;
+            margin-bottom: 20px;
         }
         .anime-card {
             background: #1a1a1a;
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
         }
-        .anime-card h3 {
+        .anime-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .anime-info {
+            padding: 15px;
+        }
+        .anime-info h3 {
             margin: 0 0 5px 0;
+            font-size: 18px;
+        }
+        .anime-info p {
+            color: #aaa;
+            font-size: 13px;
+            margin: 0 0 12px 0;
         }
         .btn {
             display: block;
             width: 100%;
-            background-color: #0088cc;
+            background: linear-gradient(45deg, #00b4db, #0083b0);
             color: white;
             text-align: center;
             padding: 12px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
-            margin-top: 10px;
             box-sizing: border-box;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
         }
         .btn:active {
             opacity: 0.8;
@@ -50,28 +69,46 @@
 </head>
 <body>
 
-    <h2>🎬 Anime Uz - Kinozali</h2>
-    <p>Ko'rish uchun anime tanlang:</p>
+    <h2>🎬 AniPix.Uz</h2>
+    <div class="subtitle">Barcha animelar to'plami bir joyda!</div>
 
-    <!-- 1-Anime -->
+    <!-- 1-Anime: Solo Leveling -->
     <div class="anime-card">
-        <h3>Solo Leveling (1-qism)</h3>
-        <p>Janr: Jangari, Fantastika, Solo</p>
-        <a href="https://t.me/animelarnN1/2" class="btn" target="_blank">Ko'rish</a>
+        <img src="https://i.imgur.com/83Z13nK.jpeg" alt="Solo Leveling" class="anime-img">
+        <div class="anime-info">
+            <h3>Solo Leveling (Barcha qismlar)</h3>
+            <p>Janr: Jangari, Fantastika, Sаргузашт</p>
+            <!-- Tugma bosilganda avval reklama ishlaydi, keyin kanalga o'tadi -->
+            <button class="btn" onclick="animeKorish('https://t.me/animelarnN1')">Ko'rish</button>
+        </div>
     </div>
 
-    <!-- 2-Anime -->
+    <!-- 2-Anime: Attack on Titan -->
     <div class="anime-card">
-        <h3>Hujum Korpusi (Attack on Titan)</h3>
-        <p>Janr: Fentezi, Drama</p>
-        <a href="https://t.me/animelarnN1/2" class="btn" target="_blank">Ko'rish</a>
+        <img src="https://i.imgur.com/j4Y6V4j.jpeg" alt="Attack on Titan" class="anime-img">
+        <div class="anime-info">
+            <h3>Hujum Korpusi (Attack on Titan)</h3>
+            <p>Janr: Fentezi, Drama, Jangari</p>
+            <button class="btn" onclick="animeKorish('https://t.me/animelarnN1')">Ko'rish</button>
+        </div>
     </div>
 
-    <!-- Telegram WebApp skripti -->
+    <!-- Telegram WebApp va Reklama logikasi -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); // Oynani to'liq ekranga yoyish
+
+        function animeKorish( kanalUvi ) {
+            // Bu yerga Monetag reklama kodingizni yoki funksiyangizni ulaysiz
+            alert("Reklama yuklanmoqda... (Bu yerda Monetag reklamasi chiqadi)");
+            
+            // Reklamadan keyin kanalga o'tkazish:
+            setTimeout(function() {
+                window.open(kanalUvi, '_blank');
+            }, 1000); // 1 sekunddan keyin kanalga o'tadi
+        }
     </script>
 </body>
 </html>
+
