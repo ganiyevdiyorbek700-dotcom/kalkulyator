@@ -128,18 +128,17 @@
             }
         }
 
-                function animeKorish(telegramUrl) {
+                        function animeKorish(telegramUrl) {
             let monetagLink = 'https://omg10.com/4/11584274'; 
 
-            // Monetag reklamasini ochish
-            if (monetagLink !== '') {
-                window.open(monetagLink, '_blank');
-            }
-
-            // Qisqa vaqt o'tgach Telegram kanalga yo'naltirish
+            // 1. Reklamani yangi oynada ochish
+            let adWindow = window.open(monetagLink, '_blank');
+            
+            // 2. Kanalga o'tishni biroz kechiktirib (1 soniya), 
+            // asosiy oynada (yoki yangi oynada) kanalni ochish
             setTimeout(() => {
-                window.open(telegramUrl, '_blank');
-            }, 600);
+                window.location.href = telegramUrl;
+            }, 1000);
         }
 
         function animeQidiruv() {
@@ -160,6 +159,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
