@@ -3,89 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Uz App</title>
-    <!-- Telegram Web App JS -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>AniPix.Uz</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
+            background-color: #0f0f0f;
             color: #ffffff;
-            margin: 0;
+            font-family: Arial, sans-serif;
             padding: 15px;
-            text-align: center;
+            margin: 0;
         }
-        h1 {
-            font-size: 22px;
-            margin-bottom: 20px;
+        h2 {
+            text-align: center;
             color: #00ffcc;
         }
+        p {
+            text-align: center;
+            color: #aaa;
+        }
         .anime-card {
-            background-color: #1e1e1e;
+            background: #1a1a1a;
             border-radius: 12px;
-            padding: 12px;
+            padding: 15px;
             margin-bottom: 15px;
-            text-align: left;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         .anime-card h3 {
             margin: 0 0 5px 0;
-            font-size: 18px;
-        }
-        .anime-card p {
-            margin: 0 0 10px 0;
-            font-size: 14px;
-            color: #aaa;
         }
         .btn {
-            background-color: #2481cc;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 14px;
-            border-radius: 8px;
-            cursor: pointer;
+            display: block;
             width: 100%;
+            background-color: #0088cc;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
             font-weight: bold;
+            margin-top: 10px;
+            box-sizing: border-box;
         }
         .btn:active {
-            background-color: #1b659d;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
 
-    <h1>🎬 Anime Uz - Kinozali</h1>
+    <h2>🎬 Anime Uz - Kinozali</h2>
     <p>Ko'rish uchun anime tanlang:</p>
 
-    <!-- 1-Anime Kartochkasi -->
+    <!-- 1-Anime -->
     <div class="anime-card">
-        <h3>Solo leveling (1-qism)</h3>
-        <p>Janr: Jangari, Fantastika,Solo </p>
-        <button class="btn" onclick="animeKorish(https://t.me/animelarnN1')">Ko'rish</button>
+        <h3>Solo Leveling (1-qism)</h3>
+        <p>Janr: Jangari, Fantastika, Solo</p>
+        <a href="https://t.me/animelarnN1/2" class="btn" target="_blank">Ko'rish</a>
     </div>
 
-    <!-- 2-Anime Kartochkasi -->
+    <!-- 2-Anime -->
     <div class="anime-card">
         <h3>Hujum Korpusi (Attack on Titan)</h3>
         <p>Janr: Fentezi, Drama</p>
-        <button class="btn" onclick="animeKorish('ht')">Ko'rish</button>
+        <a href="https://t.me/animelarnN1/2" class="btn" target="_blank">Ko'rish</a>
     </div>
 
-        <script>
+    <!-- Telegram WebApp skripti -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); // Oynani to'liq ekranga yoyish
-
-        function animeKorish(videoUrl) {
-            // Telegram orqali to'g'ridan-to'g'ri kanal postini ochish
-            if (tg.openTelegramLink) {
-                tg.openTelegramLink(videoUrl);
-            } else {
-                window.location.href = videoUrl;
-            }
-        }
     </script>
-
 </body>
 </html>
-
