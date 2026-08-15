@@ -128,16 +128,15 @@
             }
         }
 
-        function animeKorish(telegramUrl) {
-            // Monetag Smart Link havolangizni shu tirnoq ichiga yozasiz:
+                function animeKorish(telegramUrl) {
             let monetagLink = 'https://omg10.com/4/11584274'; 
 
-            // 1. Monetag reklamasini ochish
-            if(monetagLink !== 'https://omg10.com/4/11584274') {
+            // Monetag reklamasini ochish
+            if (monetagLink !== '') {
                 window.open(monetagLink, '_blank');
             }
 
-            // 2. Qisqa vaqt o'tgach Telegram kanalga yo'naltirish
+            // Qisqa vaqt o'tgach Telegram kanalga yo'naltirish
             setTimeout(() => {
                 window.open(telegramUrl, '_blank');
             }, 600);
@@ -161,6 +160,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
