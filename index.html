@@ -72,16 +72,16 @@
         <button class="btn" onclick="animeKorish('ht')">Ko'rish</button>
     </div>
 
-    <script>
+        <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); // Oynani to'liq ekranga yoyish
 
         function animeKorish(videoUrl) {
-            let korishniXohlaydi = confirm("Animeni ko'rish uchun kanalga o'tasiz. Davom etamizmi?");
-            
-            if (korishniXohlaydi) {
-                // Telegram ichida tashqi havolani ochish uchun to'g'riusul:
-                window.open(videoUrl, '_blank');
+            // Telegram orqali to'g'ridan-to'g'ri kanal postini ochish
+            if (tg.openTelegramLink) {
+                tg.openTelegramLink(videoUrl);
+            } else {
+                window.location.href = videoUrl;
             }
         }
     </script>
