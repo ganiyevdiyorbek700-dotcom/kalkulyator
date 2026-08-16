@@ -338,7 +338,7 @@
             displayAnimes(allAnimes);
         }
 
-                function displayAnimes(list) {
+                        function displayAnimes(list) {
             let listContainer = document.getElementById('animeList');
             listContainer.innerHTML = '';
 
@@ -350,31 +350,34 @@
             list.forEach(anime => {
                 let card = document.createElement('div');
                 card.className = 'anime-card';
+                // Elementlarni ustma-ust (vertikal) joylashtirish uchun stil
+                card.style.cssText = "display: flex; flex-direction: column; align-items: center; text-align: center; padding: 15px;";
+                
                 card.innerHTML = `
-                    <div class="anime-main">
-                        <img src="${anime.poster}" alt="${anime.nomi}" style="width: 80px; height: 110px; object-fit: cover; border-radius: 8px; background-color: #333;" onerror="this.src='https://via.placeholder.com/80x110?text=AniPix'">
-                        <div class="anime-details">
-                            <div>
-                                <h3>${anime.nomi}</h3>
-                                <div class="anime-info">Janr: ${anime.janri} <br> Til: ${anime.tili}</div>
-                            </div>
-                            <button class="btn" onclick="animeKorish('${anime.havola}', '${anime.id}')">Ko'rish</button>
-                        </div>
-                    </div>
+                    <!-- Katta rasm tepada -->
+<img src="${anime.poster}" alt="${anime.nomi}" style="width: 100%; max-width: 300px; height: auto; aspect-ratio: 2/3; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);" onerror="this.src='https://via.placeholder.com/300x450?text=AniPix'">
+                    <!-- Nomi, janri va tili -->
+                    <h3 style="margin: 5px 0 8px 0; font-size: 19px; color: #fff;">${anime.nomi}</h3>
+                    <div style="font-size: 13px; color: #aaa; margin-bottom: 3px;">Janr: ${anime.janri}</div>
+                    <div style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Til: ${anime.tili}</div>
+
+                    <!-- Ko'rish tugmasi -->
+                    <button class="btn" style="width: 100%; margin-bottom: 12px; padding: 10px;" onclick="animeKorish('${anime.havola}', '${anime.id}')">Ko'rish</button>
                     
-                    <div class="card-actions">
+                    <!-- Layk, ko'rishlar va kommentlar -->
+                    <div class="card-actions" style="width: 100%; display: flex; justify-content: space-around; border-top: 1px solid #333; padding-top: 10px;">
                         <button class="action-btn ${anime.isLiked ? 'liked' : ''}" onclick="toggleLike('${anime.id}')">
                             ❤️ <span id="likes_${anime.id}">${anime.likes}</span>
                         </button>
                         <button class="action-btn">
-                            👁️ <span id="views_${anime.id}">${anime.views}</span> ta ko'rildi
+                            👁️ <span id="views_${anime.id}">${anime.views}</span>
                         </button>
                         <button class="action-btn" onclick="toggleComments('${anime.id}')">
                             💬 Fikrlar (${anime.comments.length})
                         </button>
                     </div>
 
-                    <div class="comments-section" id="comments_${anime.id}">
+                    <div class="comments-section" id="comments_${anime.id}" style="width: 100%; margin-top: 10px;">
                         <div class="comment-input-box">
                             <input type="text" class="comment-input" id="input_${anime.id}" placeholder="Fikr bildiring...">
                             <button class="comment-send-btn" onclick="addComment('${anime.id}')">Yo'llash</button>
@@ -388,7 +391,6 @@
                 listContainer.appendChild(card);
             });
         }
-
         // Ko'rish tugmasi bosilganda hisoblagichni oshirish
         function animeKorish(telegramUrl, id) {
             let views = parseInt(localStorage.getItem(id + '_views')) || 0;
