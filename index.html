@@ -18,7 +18,7 @@
             margin: 0;
         }
 
-        /* 1 Soniyalik Loading Screen */
+        /* Loading Screen */
         #loading-screen {
             position: fixed;
             top: 0;
@@ -154,6 +154,9 @@
             font-size: 13px;
             transition: color 0.2s;
         }
+        .action-btn.liked {
+            color: #ff4757;
+        }
         .action-btn:hover {
             color: #fff;
         }
@@ -221,7 +224,7 @@
 </head>
 <body>
 
-    <!-- 1 Soniyalik Loading Screen -->
+    <!-- Loading Screen -->
     <div id="loading-screen">
         <div class="spinner"></div>
         <div class="load-title">🎬 AniPix.Uz</div>
@@ -260,14 +263,28 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // 1 soniyadan keyin Loading Screen'ni yashirish
-        setTimeout(() => {
+        let currentUserId = tg.initDataUnsafe?.user?.id;
+        if (!currentUserId) {
+            currentUserId = localStorage.getItem('device_user_id');
+            if (!currentUserId) {
+                currentUserId = 'user_' + Math.random().toString(36).substring(2);
+                localStorage.setItem('device_user_id', currentUserId);
+            }
+        }
+
+        // Sening Telegram ID raqaming admin sifatida o'rnatildi:
+        const ADMIN_ID = 7790655978; 
+
+        function hideLoader() {
             let loader = document.getElementById('loading-screen');
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 300);
-        }, 1000);
+            if (loader && loader.style.display !== 'none') {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 300);
+            }
+        }
+        setTimeout(hideLoader, 2000);
 
         // Firebase Ulanishi
         const firebaseConfig = {
@@ -286,7 +303,9 @@
                 let data = await response.text();
                 parseCSV(data);
             } catch (error) {
+                console.error("Xatolik:", error);
                 document.getElementById('animeList').innerHTML = '<div class="loading" style="color:red;">Maʼlumotlarni yuklashda xatolik yuz berdi!</div>';
+                hideLoader();
             }
         }
 
@@ -308,15 +327,13 @@
                     let poster = cols[4] ? cols[4].replace(/^"(.*)"$/, '$1').trim() : 'https://via.placeholder.com/300x450?text=AniPix';
 
                     if (nomi) {
-                        allAnimes.push({ id, nomi, janri, tili, havola, poster, likes: 0, views: 0, comments: [] });
+                        allAnimes.push({ id, nomi, janri, tili, havola, poster, likes: 0, views: 0, comments: [], likedUsers: {} });
                     }
                 }
             }
-            // Jadval o'qib bo'lingach, Firebase'dan ma'lumotlarni tortib kelamiz
             loadAnimeDataFromFirebase();
         }
 
-        // Firebase'dan layk, ko'rish va kommentlarni real vaqtda olish
         function loadAnimeDataFromFirebase() {
             db.ref('animes').on('value', (snapshot) => {
                 let data = snapshot.val() || {};
@@ -325,15 +342,19 @@
                     let animeData = data[anime.id] || {};
                     anime.likes = animeData.likes || 0;
                     anime.views = animeData.views || 0;
+                    anime.likedUsers = animeData.likedUsers || {};
                     
                     let commentsObj = animeData.comments || {};
                     anime.comments = Object.entries(commentsObj).map(([key, val]) => ({
                         key: key,
-                        text: typeof val === 'object' ? val.text : val
+                        text: typeof val === 'object' ? val.text : val,
+                        userId: typeof val === 'object' ? val.userId : null,
+                        userName: typeof val === 'object' ? val.userName : 'Foydalanuvchi'
                     }));
                 });
 
                 filterAnimes();
+                hideLoader();
             });
         }
 
@@ -351,6 +372,8 @@
                 card.className = 'anime-card';
                 card.style.cssText = "display: flex; flex-direction: column; align-items: center; text-align: center; padding: 15px;";
                 
+                let isLikedByMe = anime.likedUsers && anime.likedUsers[currentUserId];
+
                 card.innerHTML = `
                     <img src="${anime.poster}" alt="${anime.nomi}" style="width: 100%; max-width: 300px; height: auto; aspect-ratio: 2/3; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);" onerror="this.src='https://via.placeholder.com/300x450?text=AniPix'">
                     
@@ -361,7 +384,7 @@
                     <button class="btn" style="width: 100%; margin-bottom: 12px; padding: 10px;" onclick="animeKorish('${anime.havola}', '${anime.id}')">Ko'rish</button>
                     
                     <div class="card-actions">
-                        <button class="action-btn" onclick="toggleLike('${anime.id}')">
+                        <button class="action-btn ${isLikedByMe ? 'liked' : ''}" onclick="toggleLike('${anime.id}')">
                             ❤️ <span>${anime.likes}</span>
                         </button>
                         <button class="action-btn">
@@ -379,12 +402,18 @@
                         </div>
                         <div class="comment-list" id="list_${anime.id}">
                             ${anime.comments.length === 0 ? '<div style="color:#777; text-align:center;">Hali fikrlar yo\'q</div>' : ''}
-                            ${anime.comments.map(c => `
-                                <div class="comment-item">
-                                    <span style="word-break: break-all; padding-right: 10px; text-align: left;">${c.text}</span>
-                                    <button onclick="deleteComment('${anime.id}', '${c.key}')" style="background: none; border: none; cursor: pointer; font-size: 14px;" title="O'chirish">🗑️</button>
-                                </div>
-                            `).join('')}
+                            ${anime.comments.map(c => {
+                                let canDelete = (String(c.userId) === String(currentUserId) || String(currentUserId) === String(ADMIN_ID));
+                                return `
+                                    <div class="comment-item">
+                                        <div style="text-align: left; width: 100%;">
+                                            <span style="font-size: 11px; color: #00ffcc; display: block; margin-bottom: 2px;">${c.userName}</span>
+                                            <span style="word-break: break-all; color: #ddd;">${c.text}</span>
+                                        </div>
+                                        ${canDelete ? `<button onclick="deleteComment('${anime.id}', '${c.key}')" style="background: none; border: none; cursor: pointer; font-size: 14px; margin-left: 5px;" title="O'chirish">🗑️</button>` : ''}
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                 `;
@@ -392,7 +421,6 @@
             });
         }
 
-        // Ko'rish tugmasi bosilganda hisoblagichni bazada oshirish
         function animeKorish(telegramUrl, id) {
             let viewRef = db.ref('animes/' + id + '/views');
             viewRef.transaction(currentViews => (currentViews || 0) + 1);
@@ -404,30 +432,35 @@
             }, 1000);
         }
 
-        // Layk bosish (Baza orqali umumiy)
         function toggleLike(id) {
-            let likeRef = db.ref('animes/' + id + '/likes');
-            likeRef.transaction(currentLikes => (currentLikes || 0) + 1);
+            let userLikedRef = db.ref('animes/' + id + '/likedUsers/' + currentUserId);
+            userLikedRef.once('value', (snapshot) => {
+                if (snapshot.val()) return; // Bir marta bosilgach qaytarib bo'lmaydi
+                userLikedRef.set(true);
+                let likeRef = db.ref('animes/' + id + '/likes');
+                likeRef.transaction(currentLikes => (currentLikes || 0) + 1);
+            });
         }
 
-        // Kommentariya panelini ochib-yopish
         function toggleComments(id) {
             let section = document.getElementById(`comments_${id}`);
             section.classList.toggle('active');
         }
 
-        // Kommentariya qo'shish (Bazaga yuborish)
         function addComment(id) {
             let input = document.getElementById(`input_${id}`);
             let text = input.value.trim();
             if (!text) return;
 
             let commentsRef = db.ref('animes/' + id + '/comments');
-            commentsRef.push(text);
+            commentsRef.push({
+                text: text,
+                userId: currentUserId,
+                userName: tg.initDataUnsafe?.user?.first_name || 'Foydalanuvchi'
+            });
             input.value = '';
         }
 
-        // Kommentariyani o'chirish
         function deleteComment(animeId, commentKey) {
             db.ref('animes/' + animeId + '/comments/' + commentKey).remove();
         }
@@ -455,3 +488,4 @@
     </script>
 </body>
 </html>
+
