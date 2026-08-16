@@ -170,6 +170,8 @@
             }
         }
 
+        // ... yuqoridagi qismlar o'zgarishsiz ...
+
         function parseCSV(text) {
             let rows = text.split('\n');
             let listContainer = document.getElementById('animeList');
@@ -180,12 +182,13 @@
                 if (!row) continue;
                 
                 let cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                if (cols.length >= 4) {
+                
+                // SHU YERNI 5 GA O'ZGARTIRING
+                if (cols.length >= 5) { 
                     let nomi = cols[0] ? cols[0].replace(/^"(.*)"$/, '$1').trim() : '';
                     let janri = cols[1] ? cols[1].replace(/^"(.*)"$/, '$1').trim() : '';
                     let tili = cols[2] ? cols[2].replace(/^"(.*)"$/, '$1').trim() : '';
                     let havola = cols[3] ? cols[3].replace(/^"(.*)"$/, '$1').trim() : '';
-                    // 5-ustun poster (rasm linki) uchun
                     let poster = cols[4] ? cols[4].replace(/^"(.*)"$/, '$1').trim() : 'https://via.placeholder.com/80x110?text=No+Image';
 
                     if (nomi) {
@@ -206,6 +209,7 @@
                 }
             }
         }
+// ... qolgan qismi o'zgarishsiz ...
 
         function animeKorish(telegramUrl) {
             let monetagLink = 'https://omg10.com/4/11584274'; 
@@ -237,14 +241,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
