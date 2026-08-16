@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AniPix.Uz</title>
+    
+    <!-- Firebase Kutubxonalari -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <style>
         body {
             background-color: #0f0f0f;
@@ -109,35 +114,6 @@
             flex-direction: column;
             gap: 12px;
         }
-        .anime-main {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        .anime-poster {
-            width: 80px;
-            height: 110px;
-            object-fit: cover;
-            border-radius: 8px;
-            background-color: #252525;
-            flex-shrink: 0;
-        }
-        .anime-details {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .anime-card h3 {
-            margin: 0 0 6px 0;
-            color: #fff;
-            font-size: 16px;
-        }
-        .anime-info {
-            color: #aaa;
-            font-size: 13px;
-            margin-bottom: 10px;
-        }
         .btn {
             display: block;
             width: 100%;
@@ -156,15 +132,16 @@
             background-color: #006699;
         }
 
-        /* Statistika va Interaktiv tugmalar (Layk, Ko'rish, Komment) */
+        /* Statistika va Interaktiv tugmalar */
         .card-actions {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             align-items: center;
             border-top: 1px solid #2a2a2a;
             padding-top: 10px;
             font-size: 13px;
             color: #aaa;
+            width: 100%;
         }
         .action-btn {
             background: none;
@@ -177,9 +154,6 @@
             font-size: 13px;
             transition: color 0.2s;
         }
-        .action-btn.liked {
-            color: #ff4757;
-        }
         .action-btn:hover {
             color: #fff;
         }
@@ -190,6 +164,7 @@
             margin-top: 10px;
             border-top: 1px dashed #333;
             padding-top: 10px;
+            width: 100%;
         }
         .comments-section.active {
             display: block;
@@ -220,7 +195,7 @@
             font-weight: bold;
         }
         .comment-list {
-            max-height: 100px;
+            max-height: 120px;
             overflow-y: auto;
             font-size: 12px;
             display: flex;
@@ -232,6 +207,9 @@
             padding: 6px 8px;
             border-radius: 6px;
             color: #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .loading {
@@ -291,6 +269,13 @@
             }, 300);
         }, 1000);
 
+        // Firebase Ulanishi
+        const firebaseConfig = {
+            databaseURL: "https://anipix-c13c5-default-rtdb.firebaseio.com/"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/11sQ6ue-cF8xzAqRSjaiyEJ-tnQj2kfg_wlD2PC7FiwA/export?format=csv';
         let allAnimes = [];
         let selectedGenre = 'barchasi';
@@ -305,7 +290,7 @@
             }
         }
 
-                        function parseCSV(text) {
+        function parseCSV(text) {
             let rows = text.split('\n');
             allAnimes = [];
 
@@ -314,31 +299,45 @@
                 if (!row) continue;
                 
                 let cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                // 5 ta ustun borligini tekshiramiz (0, 1, 2, 3, 4)
                 if (cols.length >= 5) {
                     let id = 'anime_' + i;
                     let nomi = cols[0] ? cols[0].replace(/^"(.*)"$/, '$1').trim() : '';
                     let janri = cols[1] ? cols[1].replace(/^"(.*)"$/, '$1').trim() : '';
                     let tili = cols[2] ? cols[2].replace(/^"(.*)"$/, '$1').trim() : '';
                     let havola = cols[3] ? cols[3].replace(/^"(.*)"$/, '$1').trim() : '';
-                    
-                    // E ustunidan rasm havolasini avtomatik oladi
-                    let poster = cols[4] ? cols[4].replace(/^"(.*)"$/, '$1').trim() : 'https://via.placeholder.com/80x110?text=AniPix';
+                    let poster = cols[4] ? cols[4].replace(/^"(.*)"$/, '$1').trim() : 'https://via.placeholder.com/300x450?text=AniPix';
 
                     if (nomi) {
-                        let likes = parseInt(localStorage.getItem(id + '_likes')) || 0;
-                        let views = parseInt(localStorage.getItem(id + '_views')) || 0;
-                        let isLiked = localStorage.getItem(id + '_isLiked') === 'true';
-                        let comments = JSON.parse(localStorage.getItem(id + '_comments')) || [];
-
-                        allAnimes.push({ id, nomi, janri, tili, havola, poster, likes, views, isLiked, comments });
+                        allAnimes.push({ id, nomi, janri, tili, havola, poster, likes: 0, views: 0, comments: [] });
                     }
                 }
             }
-            displayAnimes(allAnimes);
+            // Jadval o'qib bo'lingach, Firebase'dan ma'lumotlarni tortib kelamiz
+            loadAnimeDataFromFirebase();
         }
 
-                        function displayAnimes(list) {
+        // Firebase'dan layk, ko'rish va kommentlarni real vaqtda olish
+        function loadAnimeDataFromFirebase() {
+            db.ref('animes').on('value', (snapshot) => {
+                let data = snapshot.val() || {};
+                
+                allAnimes.forEach(anime => {
+                    let animeData = data[anime.id] || {};
+                    anime.likes = animeData.likes || 0;
+                    anime.views = animeData.views || 0;
+                    
+                    let commentsObj = animeData.comments || {};
+                    anime.comments = Object.entries(commentsObj).map(([key, val]) => ({
+                        key: key,
+                        text: typeof val === 'object' ? val.text : val
+                    }));
+                });
+
+                filterAnimes();
+            });
+        }
+
+        function displayAnimes(list) {
             let listContainer = document.getElementById('animeList');
             listContainer.innerHTML = '';
 
@@ -350,55 +349,54 @@
             list.forEach(anime => {
                 let card = document.createElement('div');
                 card.className = 'anime-card';
-                // Elementlarni ustma-ust (vertikal) joylashtirish uchun stil
                 card.style.cssText = "display: flex; flex-direction: column; align-items: center; text-align: center; padding: 15px;";
                 
                 card.innerHTML = `
-                    <!-- Katta rasm tepada -->
-<img src="${anime.poster}" alt="${anime.nomi}" style="width: 100%; max-width: 300px; height: auto; aspect-ratio: 2/3; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);" onerror="this.src='https://via.placeholder.com/300x450?text=AniPix'">
-                    <!-- Nomi, janri va tili -->
+                    <img src="${anime.poster}" alt="${anime.nomi}" style="width: 100%; max-width: 300px; height: auto; aspect-ratio: 2/3; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);" onerror="this.src='https://via.placeholder.com/300x450?text=AniPix'">
+                    
                     <h3 style="margin: 5px 0 8px 0; font-size: 19px; color: #fff;">${anime.nomi}</h3>
                     <div style="font-size: 13px; color: #aaa; margin-bottom: 3px;">Janr: ${anime.janri}</div>
                     <div style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Til: ${anime.tili}</div>
 
-                    <!-- Ko'rish tugmasi -->
                     <button class="btn" style="width: 100%; margin-bottom: 12px; padding: 10px;" onclick="animeKorish('${anime.havola}', '${anime.id}')">Ko'rish</button>
                     
-                    <!-- Layk, ko'rishlar va kommentlar -->
-                    <div class="card-actions" style="width: 100%; display: flex; justify-content: space-around; border-top: 1px solid #333; padding-top: 10px;">
-                        <button class="action-btn ${anime.isLiked ? 'liked' : ''}" onclick="toggleLike('${anime.id}')">
-                            ❤️ <span id="likes_${anime.id}">${anime.likes}</span>
+                    <div class="card-actions">
+                        <button class="action-btn" onclick="toggleLike('${anime.id}')">
+                            ❤️ <span>${anime.likes}</span>
                         </button>
                         <button class="action-btn">
-                            👁️ <span id="views_${anime.id}">${anime.views}</span>
+                            👁️ <span>${anime.views}</span>
                         </button>
                         <button class="action-btn" onclick="toggleComments('${anime.id}')">
                             💬 Fikrlar (${anime.comments.length})
                         </button>
                     </div>
 
-                    <div class="comments-section" id="comments_${anime.id}" style="width: 100%; margin-top: 10px;">
+                    <div class="comments-section" id="comments_${anime.id}">
                         <div class="comment-input-box">
                             <input type="text" class="comment-input" id="input_${anime.id}" placeholder="Fikr bildiring...">
                             <button class="comment-send-btn" onclick="addComment('${anime.id}')">Yo'llash</button>
                         </div>
                         <div class="comment-list" id="list_${anime.id}">
                             ${anime.comments.length === 0 ? '<div style="color:#777; text-align:center;">Hali fikrlar yo\'q</div>' : ''}
-                            ${anime.comments.map(c => `<div class="comment-item">${c}</div>`).join('')}
+                            ${anime.comments.map(c => `
+                                <div class="comment-item">
+                                    <span style="word-break: break-all; padding-right: 10px; text-align: left;">${c.text}</span>
+                                    <button onclick="deleteComment('${anime.id}', '${c.key}')" style="background: none; border: none; cursor: pointer; font-size: 14px;" title="O'chirish">🗑️</button>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 `;
                 listContainer.appendChild(card);
             });
         }
-        // Ko'rish tugmasi bosilganda hisoblagichni oshirish
-        function animeKorish(telegramUrl, id) {
-            let views = parseInt(localStorage.getItem(id + '_views')) || 0;
-            views++;
-            localStorage.setItem(id + '_views', views);
-            document.getElementById(`views_${id}`).innerText = views;
 
-            // Monetag reklamasi va kanalga o'tish
+        // Ko'rish tugmasi bosilganda hisoblagichni bazada oshirish
+        function animeKorish(telegramUrl, id) {
+            let viewRef = db.ref('animes/' + id + '/views');
+            viewRef.transaction(currentViews => (currentViews || 0) + 1);
+
             let monetagLink = 'https://omg10.com/4/11584274'; 
             window.open(monetagLink, '_blank');
             setTimeout(() => {
@@ -406,30 +404,10 @@
             }, 1000);
         }
 
-        // Layk bosish funksiyasi
+        // Layk bosish (Baza orqali umumiy)
         function toggleLike(id) {
-            let likes = parseInt(localStorage.getItem(id + '_likes')) || 0;
-            let isLiked = localStorage.getItem(id + '_isLiked') === 'true';
-
-            if (isLiked) {
-                likes--;
-                isLiked = false;
-            } else {
-                likes++;
-                isLiked = true;
-            }
-
-            localStorage.setItem(id + '_likes', likes);
-            localStorage.setItem(id + '_isLiked', isLiked);
-
-            // Ekranda darhol yangilash
-            document.getElementById(`likes_${id}`).innerText = likes;
-            let btn = event.currentTarget;
-            if (isLiked) {
-                btn.classList.add('liked');
-            } else {
-                btn.classList.remove('liked');
-            }
+            let likeRef = db.ref('animes/' + id + '/likes');
+            likeRef.transaction(currentLikes => (currentLikes || 0) + 1);
         }
 
         // Kommentariya panelini ochib-yopish
@@ -438,21 +416,20 @@
             section.classList.toggle('active');
         }
 
-        // Kommentariya qo'shish
+        // Kommentariya qo'shish (Bazaga yuborish)
         function addComment(id) {
             let input = document.getElementById(`input_${id}`);
             let text = input.value.trim();
             if (!text) return;
 
-            let comments = JSON.parse(localStorage.getItem(id + '_comments')) || [];
-            comments.push(text);
-            localStorage.setItem(id + '_comments', JSON.stringify(comments));
-
+            let commentsRef = db.ref('animes/' + id + '/comments');
+            commentsRef.push(text);
             input.value = '';
-            
-            // Ro'yxatni yangilash
-            let listContainer = document.getElementById(`list_${id}`);
-            listContainer.innerHTML = comments.map(c => `<div class="comment-item">${c}</div>`).join('');
+        }
+
+        // Kommentariyani o'chirish
+        function deleteComment(animeId, commentKey) {
+            db.ref('animes/' + animeId + '/comments/' + commentKey).remove();
         }
 
         function setGenre(genre, element) {
