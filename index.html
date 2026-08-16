@@ -9,11 +9,11 @@
             background-color: #0f0f0f;
             color: #ffffff;
             font-family: 'Arial', sans-serif;
-            padding: 20px;
+            padding: 15px;
             margin: 0;
         }
 
-        /* Loading Screen dizayni */
+        /* 1 Soniyalik Loading Screen */
         #loading-screen {
             position: fixed;
             top: 0;
@@ -26,16 +26,16 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease;
         }
         .spinner {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border: 4px solid rgba(0, 255, 204, 0.2);
             border-top: 4px solid #00ffcc;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 15px;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -43,20 +43,20 @@
         }
         .load-title {
             color: #00ffcc;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
-            letter-spacing: 1px;
         }
 
         h2 {
             text-align: center;
             color: #00ffcc;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
+
         .search-box {
             width: 100%;
             padding: 12px 15px;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             background-color: #1a1a1a;
             border: 1px solid #333;
             border-radius: 8px;
@@ -68,14 +68,48 @@
         .search-box:focus {
             border-color: #0088cc;
         }
-        
-        /* Anime kartochkasi dizayni (Rasm bilan) */
+
+        /* Janrlar filtri paneli */
+        .filter-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+            scrollbar-width: none;
+        }
+        .filter-container::-webkit-scrollbar {
+            display: none;
+        }
+        .filter-chip {
+            background-color: #1a1a1a;
+            color: #aaa;
+            border: 1px solid #333;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .filter-chip.active {
+            background-color: #0088cc;
+            color: #fff;
+            border-color: #0088cc;
+        }
+
+        /* Anime kartochkasi dizayni */
         .anime-card {
             background: #1a1a1a;
             border-radius: 12px;
             padding: 15px;
             margin-bottom: 15px;
             border-left: 5px solid #0088cc;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .anime-main {
             display: flex;
             gap: 15px;
             align-items: center;
@@ -95,7 +129,7 @@
             justify-content: space-between;
         }
         .anime-card h3 {
-            margin: 0 0 8px 0;
+            margin: 0 0 6px 0;
             color: #fff;
             font-size: 16px;
         }
@@ -121,6 +155,85 @@
         .btn:active {
             background-color: #006699;
         }
+
+        /* Statistika va Interaktiv tugmalar (Layk, Ko'rish, Komment) */
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #2a2a2a;
+            padding-top: 10px;
+            font-size: 13px;
+            color: #aaa;
+        }
+        .action-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            transition: color 0.2s;
+        }
+        .action-btn.liked {
+            color: #ff4757;
+        }
+        .action-btn:hover {
+            color: #fff;
+        }
+
+        /* Kommentariya qismi */
+        .comments-section {
+            display: none;
+            margin-top: 10px;
+            border-top: 1px dashed #333;
+            padding-top: 10px;
+        }
+        .comments-section.active {
+            display: block;
+        }
+        .comment-input-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .comment-input {
+            flex-grow: 1;
+            background: #252525;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+        }
+        .comment-send-btn {
+            background: #0088cc;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .comment-list {
+            max-height: 100px;
+            overflow-y: auto;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .comment-item {
+            background: #222;
+            padding: 6px 8px;
+            border-radius: 6px;
+            color: #ddd;
+        }
+
         .loading {
             text-align: center;
             color: #aaa;
@@ -130,7 +243,7 @@
 </head>
 <body>
 
-    <!-- 3 Soniyalik Loading Screen -->
+    <!-- 1 Soniyalik Loading Screen -->
     <div id="loading-screen">
         <div class="spinner"></div>
         <div class="load-title">🎬 AniPix.Uz</div>
@@ -138,7 +251,27 @@
 
     <h2>🎬 AniPix.Uz</h2>
 
-    <input type="text" id="searchInput" class="search-box" placeholder="Anime qidirish..." onkeyup="animeQidiruv()">
+    <!-- Qidiruv paneli -->
+    <input type="text" id="searchInput" class="search-box" placeholder="Anime qidirish..." onkeyup="filterAnimes()">
+
+    <!-- 15 ta Janr filtrlari -->
+    <div class="filter-container" id="genreFilters">
+        <button class="filter-chip active" onclick="setGenre('barchasi', this)">Barchasi</button>
+        <button class="filter-chip" onclick="setGenre('jangari', this)">Jangari</button>
+        <button class="filter-chip" onclick="setGenre('fantastika', this)">Fantastika</button>
+        <button class="filter-chip" onclick="setGenre('romantika', this)">Romantika</button>
+        <button class="filter-chip" onclick="setGenre('drama', this)">Drama</button>
+        <button class="filter-chip" onclick="setGenre('sport', this)">Sport</button>
+        <button class="filter-chip" onclick="setGenre('sarguzasht', this)">Sarguzasht</button>
+        <button class="filter-chip" onclick="setGenre('komediya', this)">Komediya</button>
+        <button class="filter-chip" onclick="setGenre('triller', this)">Triller</button>
+        <button class="filter-chip" onclick="setGenre('sirli', this)">Sirli</button>
+        <button class="filter-chip" onclick="setGenre('psixologik', this)">Psixologik</button>
+        <button class="filter-chip" onclick="setGenre('tarixiy', this)">Tarixiy</button>
+        <button class="filter-chip" onclick="setGenre('hayotiy', this)">Hayotiy</button>
+        <button class="filter-chip" onclick="setGenre('fantaziya', this)">Fantaziya</button>
+        <button class="filter-chip" onclick="setGenre('urush', this)">Urush</button>
+    </div>
 
     <div id="animeList">
         <div class="loading">Ma'lumotlar yuklanmoqda...</div>
@@ -149,16 +282,18 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // 3 soniyadan keyin Loading Screen'ni yashirish
+        // 1 soniyadan keyin Loading Screen'ni yashirish
         setTimeout(() => {
             let loader = document.getElementById('loading-screen');
             loader.style.opacity = '0';
             setTimeout(() => {
                 loader.style.display = 'none';
-            }, 500);
-        }, 3000);
+            }, 300);
+        }, 1000);
 
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/11sQ6ue-cF8xzAqRSjaiyEJ-tnQj2kfg_wlD2PC7FiwA/export?format=csv';
+        let allAnimes = [];
+        let selectedGenre = 'barchasi';
 
         async function loadAnime() {
             try {
@@ -170,71 +305,173 @@
             }
         }
 
-        // ... yuqoridagi qismlar o'zgarishsiz ...
-
         function parseCSV(text) {
             let rows = text.split('\n');
-            let listContainer = document.getElementById('animeList');
-            listContainer.innerHTML = '';
+            allAnimes = [];
 
             for (let i = 1; i < rows.length; i++) {
                 let row = rows[i].trim();
                 if (!row) continue;
                 
                 let cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                
-                // SHU YERNI 5 GA O'ZGARTIRING
-                if (cols.length >= 5) { 
+                if (cols.length >= 4) {
+                    let id = 'anime_' + i; // Har bir anime uchun unique ID
                     let nomi = cols[0] ? cols[0].replace(/^"(.*)"$/, '$1').trim() : '';
                     let janri = cols[1] ? cols[1].replace(/^"(.*)"$/, '$1').trim() : '';
                     let tili = cols[2] ? cols[2].replace(/^"(.*)"$/, '$1').trim() : '';
                     let havola = cols[3] ? cols[3].replace(/^"(.*)"$/, '$1').trim() : '';
-                    let poster = cols[4] ? cols[4].replace(/^"(.*)"$/, '$1').trim() : 'https://via.placeholder.com/80x110?text=No+Image';
+                    let poster = (cols[4] && cols[4].trim() !== '') 
+                        ? cols[4].replace(/^"(.*)"$/, '$1').trim() 
+                        : 'https://via.placeholder.com/80x110?text=AniPix';
 
                     if (nomi) {
-                        let card = document.createElement('div');
-                        card.className = 'anime-card';
-                        card.innerHTML = `
-                            <img src="${poster}" alt="${nomi}" class="anime-poster" onerror="this.src='https://via.placeholder.com/80x110?text=AniPix'">
-                            <div class="anime-details">
-                                <div>
-                                    <h3>${nomi}</h3>
-                                    <div class="anime-info">Janr: ${janri} <br> Til: ${tili}</div>
-                                </div>
-                                <button class="btn" onclick="animeKorish('${havola}')">Ko'rish</button>
-                            </div>
-                        `;
-                        listContainer.appendChild(card);
+                        // LocalStorage'dan saqlangan ma'lumotlarni olish (Layk, Ko'rish, Kommentlar)
+                        let likes = parseInt(localStorage.getItem(id + '_likes')) || 0;
+                        let views = parseInt(localStorage.getItem(id + '_views')) || 0;
+                        let isLiked = localStorage.getItem(id + '_isLiked') === 'true';
+                        let comments = JSON.parse(localStorage.getItem(id + '_comments')) || [];
+
+                        allAnimes.push({ id, nomi, janri, tili, havola, poster, likes, views, isLiked, comments });
                     }
                 }
             }
+            displayAnimes(allAnimes);
         }
-// ... qolgan qismi o'zgarishsiz ...
 
-        function animeKorish(telegramUrl) {
+        function displayAnimes(list) {
+            let listContainer = document.getElementById('animeList');
+            listContainer.innerHTML = '';
+
+            if (list.length === 0) {
+                listContainer.innerHTML = '<div class="loading">Hech narsa topilmadi</div>';
+                return;
+            }
+
+            list.forEach(anime => {
+                let card = document.createElement('div');
+                card.className = 'anime-card';
+                card.innerHTML = `
+                    <div class="anime-main">
+                        <img src="${anime.poster}" alt="${anime.nomi}" class="anime-poster" onerror="this.src='https://via.placeholder.com/80x110?text=AniPix'">
+                        <div class="anime-details">
+                            <div>
+                                <h3>${anime.nomi}</h3>
+                                <div class="anime-info">Janr: ${anime.janri} <br> Til: ${anime.tili}</div>
+                            </div>
+                            <button class="btn" onclick="animeKorish('${anime.havola}', '${anime.id}')">Ko'rish</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Layk, Ko'rish va Kommentariya paneli -->
+                    <div class="card-actions">
+                        <button class="action-btn ${anime.isLiked ? 'liked' : ''}" onclick="toggleLike('${anime.id}')">
+                            ❤️ <span id="likes_${anime.id}">${anime.likes}</span>
+                        </button>
+                        <button class="action-btn">
+                            👁️ <span id="views_${anime.id}">${anime.views}</span> ta ko'rildi
+                        </button>
+                        <button class="action-btn" onclick="toggleComments('${anime.id}')">
+                            💬 Fikrlar (${anime.comments.length})
+                        </button>
+                    </div>
+
+                    <!-- Kommentariya yozish va o'qish qismi -->
+                    <div class="comments-section" id="comments_${anime.id}">
+                        <div class="comment-input-box">
+                            <input type="text" class="comment-input" id="input_${anime.id}" placeholder="Fikr bildiring...">
+                            <button class="comment-send-btn" onclick="addComment('${anime.id}')">Yo'llash</button>
+                        </div>
+                        <div class="comment-list" id="list_${anime.id}">
+                            ${anime.comments.length === 0 ? '<div style="color:#777; text-align:center;">Hali fikrlar yo\'q</div>' : ''}
+                            ${anime.comments.map(c => `<div class="comment-item">${c}</div>`).join('')}
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        // Ko'rish tugmasi bosilganda hisoblagichni oshirish
+        function animeKorish(telegramUrl, id) {
+            let views = parseInt(localStorage.getItem(id + '_views')) || 0;
+            views++;
+            localStorage.setItem(id + '_views', views);
+            document.getElementById(`views_${id}`).innerText = views;
+
+            // Monetag reklamasi va kanalga o'tish
             let monetagLink = 'https://omg10.com/4/11584274'; 
-
-            // 1. Reklamani yangi oynada ochish
-            let adWindow = window.open(monetagLink, '_blank');
-            
-            // 2. 1 soniya kechiktirib kanalga/havolaga o'tish
+            window.open(monetagLink, '_blank');
             setTimeout(() => {
                 window.location.href = telegramUrl;
             }, 1000);
         }
 
-        function animeQidiruv() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let cards = document.getElementsByClassName('anime-card');
+        // Layk bosish funksiyasi
+        function toggleLike(id) {
+            let likes = parseInt(localStorage.getItem(id + '_likes')) || 0;
+            let isLiked = localStorage.getItem(id + '_isLiked') === 'true';
 
-            for (let i = 0; i < cards.length; i++) {
-                let title = cards[i].getElementsByTagName('h3')[0].innerText.toLowerCase();
-                if (title.includes(input)) {
-                    cards[i].style.display = "";
-                } else {
-                    cards[i].style.display = "none";
-                }
+            if (isLiked) {
+                likes--;
+                isLiked = false;
+            } else {
+                likes++;
+                isLiked = true;
             }
+
+            localStorage.setItem(id + '_likes', likes);
+            localStorage.setItem(id + '_isLiked', isLiked);
+
+            // Ekranda darhol yangilash
+            document.getElementById(`likes_${id}`).innerText = likes;
+            let btn = event.currentTarget;
+            if (isLiked) {
+                btn.classList.add('liked');
+            } else {
+                btn.classList.remove('liked');
+            }
+        }
+
+        // Kommentariya panelini ochib-yopish
+        function toggleComments(id) {
+            let section = document.getElementById(`comments_${id}`);
+            section.classList.toggle('active');
+        }
+
+        // Kommentariya qo'shish
+        function addComment(id) {
+            let input = document.getElementById(`input_${id}`);
+            let text = input.value.trim();
+            if (!text) return;
+
+            let comments = JSON.parse(localStorage.getItem(id + '_comments')) || [];
+            comments.push(text);
+            localStorage.setItem(id + '_comments', JSON.stringify(comments));
+
+            input.value = '';
+            
+            // Ro'yxatni yangilash
+            let listContainer = document.getElementById(`list_${id}`);
+            listContainer.innerHTML = comments.map(c => `<div class="comment-item">${c}</div>`).join('');
+        }
+
+        function setGenre(genre, element) {
+            selectedGenre = genre;
+            document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+            element.classList.add('active');
+            filterAnimes();
+        }
+
+        function filterAnimes() {
+            let query = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filtered = allAnimes.filter(anime => {
+                let matchesSearch = anime.nomi.toLowerCase().includes(query) || anime.janri.toLowerCase().includes(query);
+                let matchesGenre = selectedGenre === 'barchasi' || anime.janri.toLowerCase().includes(selectedGenre);
+                return matchesSearch && matchesGenre;
+            });
+
+            displayAnimes(filtered);
         }
 
         loadAnime();
