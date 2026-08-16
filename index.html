@@ -305,7 +305,7 @@
             }
         }
 
-        function parseCSV(text) {
+                        function parseCSV(text) {
             let rows = text.split('\n');
             allAnimes = [];
 
@@ -314,18 +314,18 @@
                 if (!row) continue;
                 
                 let cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                if (cols.length >= 4) {
-                    let id = 'anime_' + i; // Har bir anime uchun unique ID
+                // 5 ta ustun borligini tekshiramiz (0, 1, 2, 3, 4)
+                if (cols.length >= 5) {
+                    let id = 'anime_' + i;
                     let nomi = cols[0] ? cols[0].replace(/^"(.*)"$/, '$1').trim() : '';
                     let janri = cols[1] ? cols[1].replace(/^"(.*)"$/, '$1').trim() : '';
                     let tili = cols[2] ? cols[2].replace(/^"(.*)"$/, '$1').trim() : '';
                     let havola = cols[3] ? cols[3].replace(/^"(.*)"$/, '$1').trim() : '';
-                    let poster = (cols[4] && cols[4].trim() !== '') 
-                        ? cols[4].replace(/^"(.*)"$/, '$1').trim() 
-                        : 'https://via.placeholder.com/80x110?text=AniPix';
+                    
+                    // E ustunidan rasm havolasini avtomatik oladi
+                    let poster = cols[4] ? cols[4].replace(/^"(.*)"$/, '$1').trim() : 'https://via.placeholder.com/80x110?text=AniPix';
 
                     if (nomi) {
-                        // LocalStorage'dan saqlangan ma'lumotlarni olish (Layk, Ko'rish, Kommentlar)
                         let likes = parseInt(localStorage.getItem(id + '_likes')) || 0;
                         let views = parseInt(localStorage.getItem(id + '_views')) || 0;
                         let isLiked = localStorage.getItem(id + '_isLiked') === 'true';
@@ -338,7 +338,7 @@
             displayAnimes(allAnimes);
         }
 
-        function displayAnimes(list) {
+                function displayAnimes(list) {
             let listContainer = document.getElementById('animeList');
             listContainer.innerHTML = '';
 
@@ -352,7 +352,7 @@
                 card.className = 'anime-card';
                 card.innerHTML = `
                     <div class="anime-main">
-                        <img src="${anime.poster}" alt="${anime.nomi}" class="anime-poster" onerror="this.src='https://via.placeholder.com/80x110?text=AniPix'">
+                        <img src="${anime.poster}" alt="${anime.nomi}" style="width: 80px; height: 110px; object-fit: cover; border-radius: 8px; background-color: #333;" onerror="this.src='https://via.placeholder.com/80x110?text=AniPix'">
                         <div class="anime-details">
                             <div>
                                 <h3>${anime.nomi}</h3>
@@ -362,7 +362,6 @@
                         </div>
                     </div>
                     
-                    <!-- Layk, Ko'rish va Kommentariya paneli -->
                     <div class="card-actions">
                         <button class="action-btn ${anime.isLiked ? 'liked' : ''}" onclick="toggleLike('${anime.id}')">
                             ❤️ <span id="likes_${anime.id}">${anime.likes}</span>
@@ -375,7 +374,6 @@
                         </button>
                     </div>
 
-                    <!-- Kommentariya yozish va o'qish qismi -->
                     <div class="comments-section" id="comments_${anime.id}">
                         <div class="comment-input-box">
                             <input type="text" class="comment-input" id="input_${anime.id}" placeholder="Fikr bildiring...">
