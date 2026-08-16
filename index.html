@@ -12,6 +12,42 @@
             padding: 20px;
             margin: 0;
         }
+
+        /* Loading Screen dizayni */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0f0f0f;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0, 255, 204, 0.2);
+            border-top: 4px solid #00ffcc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .load-title {
+            color: #00ffcc;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
         h2 {
             text-align: center;
             color: #00ffcc;
@@ -32,21 +68,41 @@
         .search-box:focus {
             border-color: #0088cc;
         }
+        
+        /* Anime kartochkasi dizayni (Rasm bilan) */
         .anime-card {
             background: #1a1a1a;
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 15px;
             border-left: 5px solid #0088cc;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .anime-poster {
+            width: 80px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 8px;
+            background-color: #252525;
+            flex-shrink: 0;
+        }
+        .anime-details {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .anime-card h3 {
-            margin: 0 0 10px 0;
+            margin: 0 0 8px 0;
             color: #fff;
+            font-size: 16px;
         }
         .anime-info {
             color: #aaa;
-            font-size: 14px;
-            margin-bottom: 15px;
+            font-size: 13px;
+            margin-bottom: 10px;
         }
         .btn {
             display: block;
@@ -54,12 +110,13 @@
             background-color: #0088cc;
             color: white;
             text-align: center;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
             border: none;
             cursor: pointer;
+            font-size: 14px;
         }
         .btn:active {
             background-color: #006699;
@@ -73,6 +130,12 @@
 </head>
 <body>
 
+    <!-- 3 Soniyalik Loading Screen -->
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <div class="load-title">🎬 AniPix.Uz</div>
+    </div>
+
     <h2>🎬 AniPix.Uz</h2>
 
     <input type="text" id="searchInput" class="search-box" placeholder="Anime qidirish..." onkeyup="animeQidiruv()">
@@ -85,6 +148,15 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+
+        // 3 soniyadan keyin Loading Screen'ni yashirish
+        setTimeout(() => {
+            let loader = document.getElementById('loading-screen');
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500);
+        }, 3000);
 
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/11sQ6ue-cF8xzAqRSjaiyEJ-tnQj2kfg_wlD2PC7FiwA/export?format=csv';
 
@@ -109,18 +181,25 @@
                 
                 let cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 if (cols.length >= 4) {
-                    let nomi = cols[0].replace(/^"(.*)"$/, '$1').trim();
-                    let janri = cols[1].replace(/^"(.*)"$/, '$1').trim();
-                    let tili = cols[2].replace(/^"(.*)"$/, '$1').trim();
-                    let havola = cols[3].replace(/^"(.*)"$/, '$1').trim();
+                    let nomi = cols[0] ? cols[0].replace(/^"(.*)"$/, '$1').trim() : '';
+                    let janri = cols[1] ? cols[1].replace(/^"(.*)"$/, '$1').trim() : '';
+                    let tili = cols[2] ? cols[2].replace(/^"(.*)"$/, '$1').trim() : '';
+                    let havola = cols[3] ? cols[3].replace(/^"(.*)"$/, '$1').trim() : '';
+                    // 5-ustun poster (rasm linki) uchun
+                    let poster = cols[4] ? cols[4].replace(/^"(.*)"$/, '$1').trim() : 'https://via.placeholder.com/80x110?text=No+Image';
 
                     if (nomi) {
                         let card = document.createElement('div');
                         card.className = 'anime-card';
                         card.innerHTML = `
-                            <h3>${nomi}</h3>
-                            <div class="anime-info">Janr: ${janri} <br> Til: ${tili}</div>
-                            <button class="btn" onclick="animeKorish('${havola}')">Ko'rish</button>
+                            <img src="${poster}" alt="${nomi}" class="anime-poster" onerror="this.src='https://via.placeholder.com/80x110?text=AniPix'">
+                            <div class="anime-details">
+                                <div>
+                                    <h3>${nomi}</h3>
+                                    <div class="anime-info">Janr: ${janri} <br> Til: ${tili}</div>
+                                </div>
+                                <button class="btn" onclick="animeKorish('${havola}')">Ko'rish</button>
+                            </div>
                         `;
                         listContainer.appendChild(card);
                     }
@@ -128,14 +207,13 @@
             }
         }
 
-                        function animeKorish(telegramUrl) {
+        function animeKorish(telegramUrl) {
             let monetagLink = 'https://omg10.com/4/11584274'; 
 
             // 1. Reklamani yangi oynada ochish
             let adWindow = window.open(monetagLink, '_blank');
             
-            // 2. Kanalga o'tishni biroz kechiktirib (1 soniya), 
-            // asosiy oynada (yoki yangi oynada) kanalni ochish
+            // 2. 1 soniya kechiktirib kanalga/havolaga o'tish
             setTimeout(() => {
                 window.location.href = telegramUrl;
             }, 1000);
@@ -159,6 +237,7 @@
     </script>
 </body>
 </html>
+
 
 
 
