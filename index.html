@@ -10,205 +10,255 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <style>
+        :root {
+            --bg-color: #0b0914;
+            --card-bg: #151122;
+            --accent: #ff007f;
+            --accent-blue: #00f0ff;
+            --text-main: #ffffff;
+            --text-muted: #9491a1;
+            --border: #2a2342;
+        }
+
         body {
-            background-color: #0f0f0f;
-            color: #ffffff;
-            font-family: 'Arial', sans-serif;
-            padding: 15px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 12px;
             margin: 0;
         }
 
-        /* Loading Screen */
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0f0f0f;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.4s ease;
-        }
-        .spinner {
-            width: 45px;
-            height: 45px;
-            border: 4px solid rgba(0, 255, 204, 0.2);
-            border-top: 4px solid #00ffcc;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        .header-box {
+            text-align: center;
             margin-bottom: 15px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .load-title {
-            color: #00ffcc;
-            font-size: 22px;
-            font-weight: bold;
         }
 
         h2 {
+            color: var(--accent);
+            margin: 0 0 5px 0;
+            font-size: 24px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.4);
+        }
+
+        /* Admin Panel Stili */
+        #adminPanel {
+            display: none;
+            background: linear-gradient(135deg, #1f1435, #2b1238);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
             text-align: center;
-            color: #00ffcc;
-            margin-bottom: 12px;
+            font-size: 13px;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.2);
+        }
+        #adminPanel span {
+            color: var(--accent-blue);
+            font-weight: bold;
         }
 
         .search-box {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 14px;
             margin-bottom: 12px;
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 8px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
             color: #fff;
-            font-size: 15px;
+            font-size: 14px;
             box-sizing: border-box;
             outline: none;
+            transition: all 0.3s;
         }
         .search-box:focus {
-            border-color: #0088cc;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
         }
 
         /* Janrlar filtri paneli */
         .filter-container {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             overflow-x: auto;
-            padding-bottom: 12px;
-            margin-bottom: 15px;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
             scrollbar-width: none;
         }
         .filter-container::-webkit-scrollbar {
             display: none;
         }
         .filter-chip {
-            background-color: #1a1a1a;
-            color: #aaa;
-            border: 1px solid #333;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 13px;
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
             white-space: nowrap;
             cursor: pointer;
             transition: all 0.2s ease;
         }
         .filter-chip.active {
-            background-color: #0088cc;
+            background-color: var(--accent);
             color: #fff;
-            border-color: #0088cc;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
         }
 
-        /* Anime kartochkasi dizayni */
+        /* Anime grid yoki list ixcham dizayn */
+        #animeList {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
         .anime-card {
-            background: #1a1a1a;
+            background: var(--card-bg);
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 5px solid #0088cc;
+            padding: 10px;
+            border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
+
+        .anime-poster-box {
+            width: 100%;
+            aspect-ratio: 2/3;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            background: #000;
+        }
+
+        .anime-poster-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .anime-card:hover img {
+            transform: scale(1.03);
+        }
+
+        .anime-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #fff;
+            margin: 0 0 4px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .anime-info {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
         .btn {
             display: block;
             width: 100%;
-            background-color: #0088cc;
+            background: linear-gradient(135deg, var(--accent-blue), #0088cc);
             color: white;
             text-align: center;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 7px;
+            border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
             border: none;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 12px;
+            margin-bottom: 8px;
         }
         .btn:active {
-            background-color: #006699;
+            opacity: 0.8;
         }
 
         /* Statistika va Interaktiv tugmalar */
         .card-actions {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
-            border-top: 1px solid #2a2a2a;
-            padding-top: 10px;
-            font-size: 13px;
-            color: #aaa;
-            width: 100%;
+            border-top: 1px solid var(--border);
+            padding-top: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
         }
         .action-btn {
             background: none;
             border: none;
-            color: #aaa;
+            color: var(--text-muted);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 13px;
+            gap: 3px;
+            font-size: 11px;
             transition: color 0.2s;
         }
         .action-btn.liked {
-            color: #ff4757;
+            color: var(--accent);
         }
         .action-btn:hover {
             color: #fff;
         }
 
-        /* Kommentariya qismi */
+        /* Kommentariya qismi (Modal yoki oyna ostida) */
         .comments-section {
             display: none;
-            margin-top: 10px;
-            border-top: 1px dashed #333;
-            padding-top: 10px;
-            width: 100%;
+            grid-column: span 2;
+            background: #110d1c;
+            margin-top: 5px;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            padding: 8px;
         }
         .comments-section.active {
             display: block;
         }
         .comment-input-box {
             display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 5px;
+            margin-bottom: 6px;
         }
         .comment-input {
             flex-grow: 1;
-            background: #252525;
-            border: 1px solid #444;
-            border-radius: 6px;
-            padding: 6px 10px;
+            background: #1a1528;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 5px 8px;
             color: #fff;
-            font-size: 12px;
+            font-size: 11px;
             outline: none;
         }
         .comment-send-btn {
-            background: #0088cc;
+            background: var(--accent);
             color: white;
             border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 5px 10px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
         .comment-list {
-            max-height: 120px;
+            max-height: 100px;
             overflow-y: auto;
-            font-size: 12px;
+            font-size: 11px;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
         .comment-item {
-            background: #222;
-            padding: 6px 8px;
-            border-radius: 6px;
+            background: #1a1528;
+            padding: 5px 6px;
+            border-radius: 5px;
             color: #ddd;
             display: flex;
             justify-content: space-between;
@@ -216,24 +266,27 @@
         }
 
         .loading {
+            grid-column: span 2;
             text-align: center;
-            color: #aaa;
+            color: var(--text-muted);
             margin-top: 20px;
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-        <div class="spinner"></div>
-        <div class="load-title">🎬 AniPix.Uz</div>
+    <div class="header-box">
+        <h2>⚡ AniPix.Uz</h2>
     </div>
 
-    <h2>🎬 AniPix.Uz</h2>
+    <!-- Admin Panel (Faqat egasiga ko'rinadi) -->
+    <div id="adminPanel">
+        👑 <b>Admin Panel:</b> Botga kirgan jami foydalanuvchilar: <span id="totalUsersCount">0</span> ta
+    </div>
 
     <!-- Qidiruv paneli -->
-    <input type="text" id="searchInput" class="search-box" placeholder="Anime qidirish..." onkeyup="filterAnimes()">
+    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Anime qidirish..." onkeyup="filterAnimes()">
 
     <!-- 15 ta Janr filtrlari -->
     <div class="filter-container" id="genreFilters">
@@ -255,7 +308,7 @@
     </div>
 
     <div id="animeList">
-        <div class="loading">Ma'lumotlar yuklanmoqda...</div>
+        <div class="loading">Yuklanmoqda...</div>
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -272,19 +325,7 @@
             }
         }
 
-        // Sening Telegram ID raqaming admin sifatida o'rnatildi:
-        const ADMIN_ID = 7790655978; 
-
-        function hideLoader() {
-            let loader = document.getElementById('loading-screen');
-            if (loader && loader.style.display !== 'none') {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 300);
-            }
-        }
-        setTimeout(hideLoader, 2000);
+        const ADMIN_ID = 7790655978;
 
         // Firebase Ulanishi
         const firebaseConfig = {
@@ -292,6 +333,29 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+
+        // Foydalanuvchini bazada ro'yxatdan o'tkazish (Statistika uchun)
+        function registerUserInDatabase() {
+            if (currentUserId) {
+                let userRef = db.ref('users/' + currentUserId);
+                userRef.set({
+                    lastActive: Date.now(),
+                    username: tg.initDataUnsafe?.user?.username || 'Nomaʼlum',
+                    name: tg.initDataUnsafe?.user?.first_name || 'Foydalanuvchi'
+                });
+            }
+        }
+        registerUserInDatabase();
+
+        // Agar admin bo'lsa, panelni chiqarish va sonini hisoblash
+        if (String(currentUserId) === String(ADMIN_ID)) {
+            document.getElementById('adminPanel').style.display = 'block';
+            db.ref('users').on('value', snapshot => {
+                let usersData = snapshot.val() || {};
+                let count = Object.keys(usersData).length;
+                document.getElementById('totalUsersCount').innerText = count;
+            });
+        }
 
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/11sQ6ue-cF8xzAqRSjaiyEJ-tnQj2kfg_wlD2PC7FiwA/export?format=csv';
         let allAnimes = [];
@@ -304,8 +368,7 @@
                 parseCSV(data);
             } catch (error) {
                 console.error("Xatolik:", error);
-                document.getElementById('animeList').innerHTML = '<div class="loading" style="color:red;">Maʼlumotlarni yuklashda xatolik yuz berdi!</div>';
-                hideLoader();
+                document.getElementById('animeList').innerHTML = '<div class="loading" style="color:var(--accent);">Xatolik yuz berdi!</div>';
             }
         }
 
@@ -354,7 +417,6 @@
                 });
 
                 filterAnimes();
-                hideLoader();
             });
         }
 
@@ -370,47 +432,50 @@
             list.forEach(anime => {
                 let card = document.createElement('div');
                 card.className = 'anime-card';
-                card.style.cssText = "display: flex; flex-direction: column; align-items: center; text-align: center; padding: 15px;";
                 
                 let isLikedByMe = anime.likedUsers && anime.likedUsers[currentUserId];
 
                 card.innerHTML = `
-                    <img src="${anime.poster}" alt="${anime.nomi}" style="width: 100%; max-width: 300px; height: auto; aspect-ratio: 2/3; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);" onerror="this.src='https://via.placeholder.com/300x450?text=AniPix'">
-                    
-                    <h3 style="margin: 5px 0 8px 0; font-size: 19px; color: #fff;">${anime.nomi}</h3>
-                    <div style="font-size: 13px; color: #aaa; margin-bottom: 3px;">Janr: ${anime.janri}</div>
-                    <div style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Til: ${anime.tili}</div>
+                    <div>
+                        <div class="anime-poster-box">
+                            <img src="${anime.poster}" alt="${anime.nomi}" onerror="this.src='https://via.placeholder.com/300x450?text=AniPix'">
+                        </div>
+                        <div class="anime-title" title="${anime.nomi}">${anime.nomi}</div>
+                        <div class="anime-info">Janr: ${anime.janri}</div>
+                    </div>
 
-                    <button class="btn" style="width: 100%; margin-bottom: 12px; padding: 10px;" onclick="animeKorish('${anime.havola}', '${anime.id}')">Ko'rish</button>
-                    
-                    <div class="card-actions">
-                        <button class="action-btn ${isLikedByMe ? 'liked' : ''}" onclick="toggleLike('${anime.id}')">
-                            ❤️ <span>${anime.likes}</span>
-                        </button>
-                        <button class="action-btn">
-                            👁️ <span>${anime.views}</span>
-                        </button>
-                        <button class="action-btn" onclick="toggleComments('${anime.id}')">
-                            💬 Fikrlar (${anime.comments.length})
-                        </button>
+                    <div>
+                        <button class="btn" onclick="animeKorish('${anime.havola}', '${anime.id}')">Ko'rish</button>
+                        
+                        <div class="card-actions">
+                            <button class="action-btn ${isLikedByMe ? 'liked' : ''}" onclick="toggleLike('${anime.id}')">
+                                ❤️ <span>${anime.likes}</span>
+                            </button>
+                            <button class="action-btn">
+                                👁️ <span>${anime.views}</span>
+                            </button>
+                            <button class="action-btn" onclick="toggleComments('${anime.id}')">
+                                💬 (${anime.comments.length})
+                            </button>
+                        </div>
                     </div>
 
                     <div class="comments-section" id="comments_${anime.id}">
                         <div class="comment-input-box">
-                            <input type="text" class="comment-input" id="input_${anime.id}" placeholder="Fikr bildiring...">
+                            <input type="text" class="comment-input" id="input_${anime.id}" placeholder="Fikr yozing...">
                             <button class="comment-send-btn" onclick="addComment('${anime.id}')">Yo'llash</button>
                         </div>
                         <div class="comment-list" id="list_${anime.id}">
-                            ${anime.comments.length === 0 ? '<div style="color:#777; text-align:center;">Hali fikrlar yo\'q</div>' : ''}
+                            ${anime.comments.length === 0 ? '<div style="color:#777; text-align:center;">Fikrlar yo\'q</div>' : ''}
                             ${anime.comments.map(c => {
                                 let canDelete = (String(c.userId) === String(currentUserId) || String(currentUserId) === String(ADMIN_ID));
                                 return `
                                     <div class="comment-item">
-                                        <div style="text-align: left; width: 100%;">
-                                            <span style="font-size: 11px; color: #00ffcc; display: block; margin-bottom: 2px;">${c.userName}</span>
-                                            <span style="word-break: break-all; color: #ddd;">${c.text}</span>
+                                        <div style="text-align: left; width: 100%; overflow:hidden;">
+                                            <span style="font-size: 10px; color: var(--accent-blue); display: block;">${c.userName}</span>
+                                            <span style="word-break: break-all; color: #ddd; font-size:10px;">${c.text}</span>
                                         </div>
-                                        ${canDelete ? `<button onclick="deleteComment('${anime.id}', '${c.key}')" style="background: none; border: none; cursor: pointer; font-size: 14px; margin-left: 5px;" title="O'chirish">🗑️</button>` : ''}
+                                        ${canDelete ? `<button onclick="deleteComment('${anime.id}', '${c.key}')" style="background: none; border: none; cursor: pointer; font-size: 12px; margin-left: 3px;" title="O'chirish">🗑️</button>` : ''}
                                     </div>
                                 `;
                             }).join('')}
@@ -435,7 +500,7 @@
         function toggleLike(id) {
             let userLikedRef = db.ref('animes/' + id + '/likedUsers/' + currentUserId);
             userLikedRef.once('value', (snapshot) => {
-                if (snapshot.val()) return; // Bir marta bosilgach qaytarib bo'lmaydi
+                if (snapshot.val()) return; 
                 userLikedRef.set(true);
                 let likeRef = db.ref('animes/' + id + '/likes');
                 likeRef.transaction(currentLikes => (currentLikes || 0) + 1);
@@ -488,4 +553,3 @@
     </script>
 </body>
 </html>
-
